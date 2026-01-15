@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fospha x Walmart Connect Integration - Demo Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4e8ec 100%);
+        }
+
+        .fospha-gradient {
+            background: linear-gradient(135deg, #2563eb 0%, #7c3aed 100%);
+        }
+
+        .walmart-gradient {
+            background: linear-gradient(135deg, #0071dc 0%, #004c91 100%);
+        }
+
+        .card-hover {
+            transition: all 0.3s ease;
+        }
+
+        .card-hover:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.12);
+        }
+
+        .metric-card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        }
+
+        .status-badge {
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.6; }
+        }
+
+        .data-flow-animation {
+            animation: flowRight 2s ease-in-out infinite;
+        }
+
+        @keyframes flowRight {
+            0% { transform: translateX(-10px); opacity: 0; }
+            50% { opacity: 1; }
+            100% { transform: translateX(10px); opacity: 0; }
+        }
+
+        .connector-line {
+            background: linear-gradient(90deg, #2563eb, #7c3aed, #0071dc);
+            background-size: 200% 100%;
+            animation: gradientFlow 3s ease infinite;
+        }
+
+        @keyframes gradientFlow {
+            0% { background-position: 0% 50%; }
+            50% { background-position: 100% 50%; }
+            100% { background-position: 0% 50%; }
+        }
+    </style>
+</head>
+<body class="min-h-screen">
+    <!-- Header -->
+    <header class="fospha-gradient text-white py-6 px-8 shadow-lg">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div class="flex items-center gap-4">
+                <div class="w-12 h-12 bg-white rounded-xl flex items-center justify-center">
+                    <svg class="w-8 h-8 text-blue-600" fill="currentColor" viewBox="0 0 24 24">
+                        <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                    </svg>
+                </div>
+                <div>
+                    <h1 class="text-2xl font-bold">Fospha Analytics</h1>
+                    <p class="text-blue-200 text-sm">Walmart Connect Integration Prototype</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-6">
+                <div class="text-right">
+                    <p class="text-sm text-blue-200">Demo Client</p>
+                    <p class="font-semibold">Callaway Golf</p>
+                </div>
+                <div class="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full">
+                    <span class="status-badge w-2 h-2 bg-green-400 rounded-full"></span>
+                    <span class="text-sm">Connected</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-7xl mx-auto px-8 py-8">
+        <!-- Integration Architecture -->
+        <section class="mb-8">
+            <div class="bg-white rounded-2xl p-6 shadow-lg">
+                <h2 class="text-lg font-semibold text-gray-800 mb-4">🔗 Integration Architecture</h2>
+                <div class="flex items-center justify-between gap-4">
+                    <!-- Walmart Connect -->
+                    <div class="flex-1 bg-gradient-to-br from-blue-50 to-blue-100 rounded-xl p-4 border-2 border-blue-200">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 walmart-gradient rounded-lg flex items-center justify-center">
+                                <span class="text-white font-bold text-sm">W</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Walmart Connect</h3>
+                                <p class="text-xs text-gray-500">Advertising API</p>
+                            </div>
+                        </div>
+                        <div class="space-y-1 text-xs text-gray-600">
+                            <p>✓ Campaign Performance</p>
+                            <p>✓ In-Store Attribution</p>
+                            <p>✓ Real-Time Stats</p>
+                        </div>
+                    </div>
+
+                    <!-- Connector Flow -->
+                    <div class="flex flex-col items-center px-4">
+                        <div class="connector-line h-1 w-24 rounded-full mb-2"></div>
+                        <span class="text-xs text-gray-500 data-flow-animation">→ Daily Sync →</span>
+                    </div>
+
+                    <!-- Fospha -->
+                    <div class="flex-1 bg-gradient-to-br from-purple-50 to-purple-100 rounded-xl p-4 border-2 border-purple-200">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 fospha-gradient rounded-lg flex items-center justify-center">
+                                <span class="text-white font-bold text-sm">F</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Fospha Platform</h3>
+                                <p class="text-xs text-gray-500">Unified Measurement</p>
+                            </div>
+                        </div>
+                        <div class="space-y-1 text-xs text-gray-600">
+                            <p>✓ Halo Modeling</p>
+                            <p>✓ Cross-Channel Attribution</p>
+                            <p>✓ Unified ROAS</p>
+                        </div>
+                    </div>
+
+                    <!-- Connector Flow -->
+                    <div class="flex flex-col items-center px-4">
+                        <div class="connector-line h-1 w-24 rounded-full mb-2"></div>
+                        <span class="text-xs text-gray-500 data-flow-animation">→ Transform →</span>
+                    </div>
+
+                    <!-- Marketplace -->
+                    <div class="flex-1 bg-gradient-to-br from-green-50 to-green-100 rounded-xl p-4 border-2 border-green-200">
+                        <div class="flex items-center gap-3 mb-3">
+                            <div class="w-10 h-10 bg-gradient-to-br from-green-500 to-green-600 rounded-lg flex items-center justify-center">
+                                <span class="text-white font-bold text-sm">M</span>
+                            </div>
+                            <div>
+                                <h3 class="font-semibold text-gray-800">Walmart Marketplace</h3>
+                                <p class="text-xs text-gray-500">Sales API</p>
+                            </div>
+                        </div>
+                        <div class="space-y-1 text-xs text-gray-600">
+                            <p>✓ Order History</p>
+                            <p>✓ Revenue Data</p>
+                            <p>✓ Organic Sales</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Key Metrics -->
+        <section class="grid grid-cols-4 gap-6 mb-8">
+            <div class="metric-card p-6 card-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm font-medium text-gray-500">Unified Revenue</span>
+                    <span class="text-xs px-2 py-1 bg-green-100 text-green-700 rounded-full">+15.7%</span>
+                </div>
+                <p class="text-3xl font-bold text-gray-800">$4.8M</p>
+                <p class="text-sm text-gray-500 mt-2">Last 30 days (Walmart)</p>
+            </div>
+
+            <div class="metric-card p-6 card-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm font-medium text-gray-500">Total Ad Spend</span>
+                    <span class="text-xs px-2 py-1 bg-blue-100 text-blue-700 rounded-full">Walmart Connect</span>
+                </div>
+                <p class="text-3xl font-bold text-gray-800">$612K</p>
+                <p class="text-sm text-gray-500 mt-2">Across all campaigns</p>
+            </div>
+
+            <div class="metric-card p-6 card-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm font-medium text-gray-500">Unified ROAS</span>
+                    <span class="text-xs px-2 py-1 bg-purple-100 text-purple-700 rounded-full">+2.3x vs Platform</span>
+                </div>
+                <p class="text-3xl font-bold text-gray-800">7.8x</p>
+                <p class="text-sm text-gray-500 mt-2">Including Halo Effect</p>
+            </div>
+
+            <div class="metric-card p-6 card-hover">
+                <div class="flex items-center justify-between mb-4">
+                    <span class="text-sm font-medium text-gray-500">In-Store Sales</span>
+                    <span class="text-xs px-2 py-1 bg-orange-100 text-orange-700 rounded-full">Walmart Exclusive</span>
+                </div>
+                <p class="text-3xl font-bold text-gray-800">$1.2M</p>
+                <p class="text-sm text-gray-500 mt-2">Attributed to ads</p>
+            </div>
+        </section>
+
+        <!-- Charts Row -->
+        <section class="grid grid-cols-2 gap-6 mb-8">
+            <!-- Revenue Breakdown -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Walmart Revenue Attribution</h3>
+                <div class="h-64">
+                    <canvas id="revenueBreakdownChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Channel Performance -->
+            <div class="bg-white rounded-2xl p-6 shadow-lg">
+                <h3 class="text-lg font-semibold text-gray-800 mb-4">Channel Performance (Walmart)</h3>
+                <div class="h-64">
+                    <canvas id="channelPerformanceChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Halo Effect Visualization -->
+        <section class="bg-white rounded-2xl p-6 shadow-lg mb-8">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h3 class="text-lg font-semibold text-gray-800">🎯 Walmart Halo Effect</h3>
+                    <p class="text-sm text-gray-500">How DTC advertising drives Walmart marketplace sales</p>
+                </div>
+                <div class="flex items-center gap-2 px-4 py-2 bg-purple-100 rounded-full">
+                    <span class="text-purple-700 font-medium">Halo Multiplier: 2.3x</span>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-3 gap-6">
+                <!-- DTC Ads Impact -->
+                <div class="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-xl p-5 border border-blue-100">
+                    <h4 class="font-medium text-gray-700 mb-4">DTC Ad Spend</h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Meta Ads</span>
+                            <span class="font-semibold">$285K</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Google Ads</span>
+                            <span class="font-semibold">$198K</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">TikTok Ads</span>
+                            <span class="font-semibold">$87K</span>
+                        </div>
+                        <div class="border-t pt-3 mt-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-700">Total DTC Spend</span>
+                                <span class="font-bold text-blue-600">$570K</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Arrow -->
+                <div class="flex items-center justify-center">
+                    <div class="text-center">
+                        <div class="text-4xl mb-2">→</div>
+                        <div class="bg-purple-100 text-purple-700 px-4 py-2 rounded-full text-sm font-medium">
+                            Halo Effect
+                        </div>
+                        <p class="text-xs text-gray-500 mt-2">Measured by Fospha</p>
+                    </div>
+                </div>
+
+                <!-- Walmart Sales Impact -->
+                <div class="bg-gradient-to-br from-green-50 to-emerald-50 rounded-xl p-5 border border-green-100">
+                    <h4 class="font-medium text-gray-700 mb-4">Walmart Sales Impact</h4>
+                    <div class="space-y-3">
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Online Sales</span>
+                            <span class="font-semibold">$3.6M</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">In-Store Sales</span>
+                            <span class="font-semibold">$1.2M</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-sm text-gray-600">Halo Attributed</span>
+                            <span class="font-semibold text-purple-600">$1.8M</span>
+                        </div>
+                        <div class="border-t pt-3 mt-3">
+                            <div class="flex justify-between items-center">
+                                <span class="text-sm font-medium text-gray-700">Unified ROAS</span>
+                                <span class="font-bold text-green-600">8.4x</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Data Pipeline Status -->
+        <section class="bg-white rounded-2xl p-6 shadow-lg mb-8">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">📊 Connector Data Pipeline</h3>
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead>
+                        <tr class="text-left text-sm text-gray-500 border-b">
+                            <th class="pb-3 font-medium">Data Source</th>
+                            <th class="pb-3 font-medium">Last Sync</th>
+                            <th class="pb-3 font-medium">Records</th>
+                            <th class="pb-3 font-medium">Status</th>
+                            <th class="pb-3 font-medium">Next Sync</th>
+                        </tr>
+                    </thead>
+                    <tbody class="text-sm">
+                        <tr class="border-b border-gray-100">
+                            <td class="py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 walmart-gradient rounded flex items-center justify-center">
+                                        <span class="text-white text-xs font-bold">W</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-800">Walmart Connect Ads</p>
+                                        <p class="text-xs text-gray-500">Campaign Performance</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-4 text-gray-600">Jan 15, 2026 11:45 AM</td>
+                            <td class="py-4 text-gray-600">2,847</td>
+                            <td class="py-4">
+                                <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">✓ Synced</span>
+                            </td>
+                            <td class="py-4 text-gray-600">Jan 16, 2026 6:00 AM</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-green-500 to-green-600 rounded flex items-center justify-center">
+                                        <span class="text-white text-xs font-bold">M</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-800">Walmart Marketplace</p>
+                                        <p class="text-xs text-gray-500">Sales & Orders</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-4 text-gray-600">Jan 15, 2026 11:47 AM</td>
+                            <td class="py-4 text-gray-600">15,234</td>
+                            <td class="py-4">
+                                <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">✓ Synced</span>
+                            </td>
+                            <td class="py-4 text-gray-600">Jan 16, 2026 6:00 AM</td>
+                        </tr>
+                        <tr class="border-b border-gray-100">
+                            <td class="py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 bg-gradient-to-br from-orange-500 to-orange-600 rounded flex items-center justify-center">
+                                        <span class="text-white text-xs font-bold">IS</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-800">In-Store Attribution</p>
+                                        <p class="text-xs text-gray-500">Walmart Exclusive</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-4 text-gray-600">Jan 15, 2026 11:48 AM</td>
+                            <td class="py-4 text-gray-600">1,456</td>
+                            <td class="py-4">
+                                <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">✓ Synced</span>
+                            </td>
+                            <td class="py-4 text-gray-600">Jan 16, 2026 6:00 AM</td>
+                        </tr>
+                        <tr>
+                            <td class="py-4">
+                                <div class="flex items-center gap-3">
+                                    <div class="w-8 h-8 fospha-gradient rounded flex items-center justify-center">
+                                        <span class="text-white text-xs font-bold">H</span>
+                                    </div>
+                                    <div>
+                                        <p class="font-medium text-gray-800">Halo Calculation</p>
+                                        <p class="text-xs text-gray-500">Organic Attribution</p>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="py-4 text-gray-600">Jan 15, 2026 11:50 AM</td>
+                            <td class="py-4 text-gray-600">930</td>
+                            <td class="py-4">
+                                <span class="px-2 py-1 bg-green-100 text-green-700 rounded-full text-xs">✓ Processed</span>
+                            </td>
+                            <td class="py-4 text-gray-600">Jan 16, 2026 6:15 AM</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+        <!-- API Schema Preview -->
+        <section class="bg-white rounded-2xl p-6 shadow-lg mb-8">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">🔧 Data Schema (Fospha Format)</h3>
+            <div class="grid grid-cols-2 gap-6">
+                <!-- Advertising Schema -->
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <h4 class="font-medium text-gray-700 mb-3">Advertising Data Schema</h4>
+                    <pre class="text-xs bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto"><code>{
+  "activity_date": "2026-01-15",
+  "campaign_id": "WMC-CG-SP-001",
+  "campaign_name": "Callaway Golf - Sponsored Products",
+  "cost": 2456.78,
+  "impressions": 125000,
+  "clicks": 3750,
+  "market": "US",
+  "revenue": 18234.56,
+  "conversions": 89,
+  "currency_code": "USD",
+  "channel_group": "Walmart Sponsored Products",
+  "source": "walmart",
+  "sales_platform": "walmart",
+  "in_store_attributed_sales": 4567.89,
+  "online_attributed_sales": 13666.67,
+  "roas": 7.42,
+  "is_drain": 0,
+  "is_boost": 1
+}</code></pre>
+                </div>
+
+                <!-- Sales Schema -->
+                <div class="bg-gray-50 rounded-xl p-4">
+                    <h4 class="font-medium text-gray-700 mb-3">Sales Data Schema</h4>
+                    <pre class="text-xs bg-gray-900 text-blue-400 p-4 rounded-lg overflow-x-auto"><code>{
+  "activity_date": "2026-01-15",
+  "profile": "CALLAWAY-SELLER-001",
+  "country": "US",
+  "sales_platform": "walmart",
+  "channel_group": "Walmart Organic",
+  "source": "walmart",
+  "conversions": 234,
+  "revenue": 45678.90,
+  "units_sold": 312,
+  "currency_code": "USD",
+  "order_count": 234,
+  "average_order_value": 195.21,
+  "is_drain": 1,
+  "is_boost": 0
+}</code></pre>
+                </div>
+            </div>
+        </section>
+
+        <!-- Value Proposition -->
+        <section class="bg-gradient-to-br from-purple-600 to-blue-600 rounded-2xl p-8 text-white mb-8">
+            <h3 class="text-2xl font-bold mb-6">💡 Value for Fospha Clients</h3>
+            <div class="grid grid-cols-3 gap-6">
+                <div class="bg-white/10 rounded-xl p-5">
+                    <div class="text-3xl mb-3">📊</div>
+                    <h4 class="font-semibold mb-2">Unified Measurement</h4>
+                    <p class="text-sm text-white/80">See Walmart alongside Amazon, DTC, and other channels in a single dashboard with unified ROAS.</p>
+                </div>
+                <div class="bg-white/10 rounded-xl p-5">
+                    <div class="text-3xl mb-3">🏪</div>
+                    <h4 class="font-semibold mb-2">In-Store Attribution</h4>
+                    <p class="text-sm text-white/80">Unique access to Walmart's in-store sales data - see the true impact of digital ads on physical retail.</p>
+                </div>
+                <div class="bg-white/10 rounded-xl p-5">
+                    <div class="text-3xl mb-3">🎯</div>
+                    <h4 class="font-semibold mb-2">Halo Effect</h4>
+                    <p class="text-sm text-white/80">Measure how DTC advertising (Meta, Google, TikTok) drives incremental Walmart sales.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Technical Requirements -->
+        <section class="bg-white rounded-2xl p-6 shadow-lg">
+            <h3 class="text-lg font-semibold text-gray-800 mb-4">📋 Technical Implementation Checklist</h3>
+            <div class="grid grid-cols-2 gap-8">
+                <div>
+                    <h4 class="font-medium text-gray-700 mb-3">Connector Requirements</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center gap-2 text-sm">
+                            <span class="w-5 h-5 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xs">✓</span>
+                            <span>OAuth 2.0 authentication flow</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-sm">
+                            <span class="w-5 h-5 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xs">✓</span>
+                            <span>Daily incremental sync (7-day lookback)</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-sm">
+                            <span class="w-5 h-5 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xs">✓</span>
+                            <span>Campaign-level granularity (ad-level available)</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-sm">
+                            <span class="w-5 h-5 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xs">✓</span>
+                            <span>In-store attribution metrics</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-sm">
+                            <span class="w-5 h-5 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-xs">✓</span>
+                            <span>Multi-market support (US, CA, MX)</span>
+                        </li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="font-medium text-gray-700 mb-3">Fospha Integration Points</h4>
+                    <ul class="space-y-2">
+                        <li class="flex items-center gap-2 text-sm">
+                            <span class="w-5 h-5 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs">→</span>
+                            <span>Channel mapping: Walmart Sponsored Products/Brands/Display</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-sm">
+                            <span class="w-5 h-5 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs">→</span>
+                            <span>Drain channel: Walmart Organic</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-sm">
+                            <span class="w-5 h-5 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs">→</span>
+                            <span>Halo toggle for dashboard</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-sm">
+                            <span class="w-5 h-5 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs">→</span>
+                            <span>Model configuration parameters</span>
+                        </li>
+                        <li class="flex items-center gap-2 text-sm">
+                            <span class="w-5 h-5 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center text-xs">→</span>
+                            <span>Fivetran connector setup (if available)</span>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-gray-800 text-white py-6 px-8 mt-8">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+            <div>
+                <p class="text-sm text-gray-400">Fospha Walmart Connect Connector Prototype</p>
+                <p class="text-xs text-gray-500">Built for Product Team Demo - January 2026</p>
+            </div>
+            <div class="text-sm text-gray-400">
+                Demo Client: Callaway Golf | Data: Simulated
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Revenue Breakdown Chart
+        const revenueCtx = document.getElementById('revenueBreakdownChart').getContext('2d');
+        new Chart(revenueCtx, {
+            type: 'doughnut',
+            data: {
+                labels: ['Ad-Attributed (Online)', 'Ad-Attributed (In-Store)', 'Organic', 'Halo Effect'],
+                datasets: [{
+                    data: [2400000, 1200000, 800000, 400000],
+                    backgroundColor: [
+                        'rgba(37, 99, 235, 0.8)',
+                        'rgba(249, 115, 22, 0.8)',
+                        'rgba(34, 197, 94, 0.8)',
+                        'rgba(139, 92, 246, 0.8)'
+                    ],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: {
+                            padding: 20,
+                            usePointStyle: true
+                        }
+                    }
+                }
+            }
+        });
+
+        // Channel Performance Chart
+        const channelCtx = document.getElementById('channelPerformanceChart').getContext('2d');
+        new Chart(channelCtx, {
+            type: 'bar',
+            data: {
+                labels: ['Sponsored Products', 'Sponsored Brands', 'Sponsored Display'],
+                datasets: [
+                    {
+                        label: 'Revenue ($K)',
+                        data: [2100, 1500, 1200],
+                        backgroundColor: 'rgba(37, 99, 235, 0.8)',
+                        borderRadius: 8
+                    },
+                    {
+                        label: 'Ad Spend ($K)',
+                        data: [280, 195, 137],
+                        backgroundColor: 'rgba(139, 92, 246, 0.8)',
+                        borderRadius: 8
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top'
+                    }
+                },
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        grid: {
+                            display: false
+                        }
+                    },
+                    x: {
+                        grid: {
+                            display: false
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
